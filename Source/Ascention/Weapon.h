@@ -73,7 +73,6 @@ public:
 /********************************************************************************************************************
 													VARIABLES
 *********************************************************************************************************************/	
-	USceneComponent* pickupRoot;
 
 	//Weapon model while on the floor, not owned by anyone, might get replaced by a generic collectable object
 	UPROPERTY(EditAnywhere,Category="Ascention|World|Visual",DisplayName="World mesh")

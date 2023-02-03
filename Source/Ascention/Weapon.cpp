@@ -20,25 +20,20 @@ void AWeapon::InitializeWeapon(){
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	pickupRoot = CreateDefaultSubobject<USceneComponent>(TEXT("PickupRoot"));
-	//RootComponent = pickupRoot;
-
-	worldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	worldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WorldMesh"));
 	RootComponent = worldMesh;
-	//worldMesh->AttachToComponent(this->pickupRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	//StaticMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	worldMesh->SetSimulatePhysics(true);
 	worldMesh->SetCollisionProfileName(TEXT("BlockAll"));
 
-	firstPersonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("First person mesh"));
+	firstPersonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FirstPersonMesh"));
 	firstPersonMesh->SetSimulatePhysics(false);
 	firstPersonMesh->SetCollisionProfileName(TEXT("NoCollision"));
 	firstPersonMesh->SetVisibility(false);
 	firstPersonMesh->AttachToComponent(this->worldMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
 	//Make 3rd person mesh be the same as the world mesh?
-	thirdPersonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Third person mesh"));
+	thirdPersonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ThirdPersonMesh"));
 	thirdPersonMesh->SetSimulatePhysics(false);
 	thirdPersonMesh->SetCollisionProfileName(TEXT("NoCollision"));
 	thirdPersonMesh->SetVisibility(false);
@@ -46,7 +41,7 @@ void AWeapon::InitializeWeapon(){
 
 	interactionRadius = 40.0f;
 
-	interactionHitbox = CreateAbstractDefaultSubobject<USphereComponent>("Collection Sphere");
+	interactionHitbox = CreateAbstractDefaultSubobject<USphereComponent>("CollectionSphere");
 	interactionHitbox->AttachToComponent(this->worldMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	interactionHitbox->SetSphereRadius(interactionRadius, true);
 	interactionHitbox->SetGenerateOverlapEvents(true);

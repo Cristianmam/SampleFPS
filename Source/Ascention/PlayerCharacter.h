@@ -117,6 +117,9 @@ public:
 /********************************************************************************************************************
 													VARIABLES
 *********************************************************************************************************************/	
+	/**CAMERA**/
+	APlayerCameraManager* playerCamera;
+	/**------**/
 
 	/**CHARACTER MOVEMENT**/
 	UPROPERTY(EditAnywhere,Category="Character movement",DisplayName="Base movement speed");

@@ -14,6 +14,8 @@ class ASCENTION_API APistol : public AWeapon
 
 public:
 
+	//In this class we define all common things to pistols of different types, should a pistol need a specific variation
+	//say, a different fire mode, it can be overriden on the inheriting class/blueprint.
 	virtual void FirePressed() override;
 
 	virtual void FireReleased() override;

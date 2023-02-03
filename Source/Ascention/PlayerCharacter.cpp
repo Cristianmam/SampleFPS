@@ -4,6 +4,7 @@
 #include "PlayerCharacter.h"
 #include "PlayerData.h"
 #include "Weapon.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(){
@@ -21,6 +22,7 @@ void APlayerCharacter::ConstructCharacter(){
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	
 	_movementComponent = GetCharacterMovement();
 
 	baseMovementSpeed = 600.0f;
@@ -45,6 +47,9 @@ void APlayerCharacter::BeginPlay(){
 
 	//IMPORTANT: ADD DYNAMICS ON BEGIN PLAY!!!
 	OnActorBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlap);
+
+	if (GetWorld())
+		playerCamera = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 
 	//Init Movement
 	_movementComponent->MaxWalkSpeed = baseMovementSpeed;
