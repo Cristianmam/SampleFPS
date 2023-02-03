@@ -90,7 +90,7 @@ public:
 
 	/**WEAPON HANDLELING**/
 	//Rewrite this when the inventory system gets added
-	virtual void PickupWeapon(AWeapon* weapon);
+	virtual void PickUpWeapon(AWeapon* weapon);
 
 	virtual void SwitchToWeapon1();
 	virtual void SwitchToWeapon2();
@@ -110,6 +110,7 @@ public:
 	/**-----------------**/
 
 	/**MISCELLANEOUS**/
+	UFUNCTION() //IMPORTANT: OVERLAP FUNCTIONS SHOULD BE DECLARED AS UFUNCTIONS!!!
 	virtual void OnOverlap(class AActor* overlapedActor, class AActor* otherActor);
 	/**-------------**/
 

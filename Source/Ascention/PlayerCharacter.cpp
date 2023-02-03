@@ -35,12 +35,17 @@ void APlayerCharacter::ConstructCharacter(){
 	dashSpeed = 6000.f;
 	dashCooldown = 1.0f;
 	_dashOnCD = false;
+
+	
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay(){
 	Super::BeginPlay();
-	
+
+	//IMPORTANT: ADD DYNAMICS ON BEGIN PLAY!!!
+	OnActorBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlap);
+
 	//Init Movement
 	_movementComponent->MaxWalkSpeed = baseMovementSpeed;
 
@@ -102,8 +107,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Switch to weapon 2", IE_Pressed, this, &APlayerCharacter::SwitchToWeapon2);
 	PlayerInputComponent->BindAction("Switch to heavy weapon", IE_Pressed, this, &APlayerCharacter::SwitchToHeavyWeapon);
 
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::PrimaryFirePressed);
-	PlayerInputComponent->BindAction("Fire", IE_Released, this, &APlayerCharacter::PrimaryFireReleased);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::FirePressed);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &APlayerCharacter::FireReleased);
 
 	PlayerInputComponent->BindAction("AltFire", IE_Pressed, this, &APlayerCharacter::AltFirePressed);
 	PlayerInputComponent->BindAction("AltFire", IE_Released, this, &APlayerCharacter::AltFireReleased);
@@ -213,9 +218,12 @@ void APlayerCharacter::StopSprint() {
 
 /**WEAPON HANDLELING**/
 //Rewrite this when the inventory system gets added
-void APlayerCharacter::PickupWeapon(AWeapon* weapon){
+void APlayerCharacter::PickUpWeapon(AWeapon* weapon){
 	if(weapon->weaponOwner != NULL)
 		return;
+
+	//Add logic to tell the weapon where to socket itself
+	weapon->BindWeapon(this);
 
 	//switch weapon type
 	if(wieldedWeapon == NULL){
@@ -240,7 +248,7 @@ void APlayerCharacter::SwitchToWeapon1(){
 		return;
 
 	wieldedWeapon = weaponSlot1;
-	FString output = "Switching wielded weapon to " + wieldedWeapon->DisplayName;
+	FString output = "Switching wielded weapon to " + wieldedWeapon->displayName;
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, output);
 }
 void APlayerCharacter::SwitchToWeapon2(){
@@ -248,7 +256,7 @@ void APlayerCharacter::SwitchToWeapon2(){
 		return;
 
 	wieldedWeapon = weaponSlot2;
-	FString output = "Switching wielded weapon to " + wieldedWeapon->DisplayName;
+	FString output = "Switching wielded weapon to " + wieldedWeapon->displayName;
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, output);
 }
 void APlayerCharacter::SwitchToHeavyWeapon(){
@@ -256,15 +264,21 @@ void APlayerCharacter::SwitchToHeavyWeapon(){
 		return;
 
 	wieldedWeapon = heavyWeaponSlot;
-	FString output = "Switching wielded weapon to " + wieldedWeapon->DisplayName;
+	FString output = "Switching wielded weapon to " + wieldedWeapon->displayName;
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, output);
 }
 
 void APlayerCharacter::FirePressed(){
+	if (wieldedWeapon == NULL)
+		return;
 
+	wieldedWeapon->FirePressed();
 }
 void APlayerCharacter::FireReleased(){
+	if (wieldedWeapon == NULL)
+		return;
 
+	wieldedWeapon->FireReleased();
 }
 
 void APlayerCharacter::AltFirePressed(){
@@ -300,7 +314,7 @@ void APlayerCharacter::OnOverlap(class AActor* overlapedActor, class AActor* oth
 	if (otherClass->IsChildOf(AWeapon::StaticClass())) {
 		AWeapon* weapon = Cast<AWeapon>(otherActor);
 
-		FString output = "Collided with " + weapon->DisplayName;
+		FString output = "Collided with " + weapon->displayName;
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, output);
 
 		PickUpWeapon(weapon);

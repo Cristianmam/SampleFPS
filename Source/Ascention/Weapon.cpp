@@ -20,19 +20,37 @@ void AWeapon::InitializeWeapon(){
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	staticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	staticMesh->AttachToComponent(this->RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	pickupRoot = CreateDefaultSubobject<USceneComponent>(TEXT("PickupRoot"));
+	//RootComponent = pickupRoot;
+
+	worldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	RootComponent = worldMesh;
+	//worldMesh->AttachToComponent(this->pickupRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	//StaticMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-	staticMesh->SetSimulatePhysics(true);
-	staticMesh->SetCollisionProfileName(TEXT("BlockAll"));
+	worldMesh->SetSimulatePhysics(true);
+	worldMesh->SetCollisionProfileName(TEXT("BlockAll"));
 
-	interactionHitbox = CreateAbstractDefaultSubobject<USphereComponent>("Collection Sphere");
-	interactionHitbox->AttachToComponent(this->RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	firstPersonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("First person mesh"));
+	firstPersonMesh->SetSimulatePhysics(false);
+	firstPersonMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	firstPersonMesh->SetVisibility(false);
+	firstPersonMesh->AttachToComponent(this->worldMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
-	interactionHitbox->SetCollisionProfileName(TEXT("Pickup"));
+	//Make 3rd person mesh be the same as the world mesh?
+	thirdPersonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Third person mesh"));
+	thirdPersonMesh->SetSimulatePhysics(false);
+	thirdPersonMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	thirdPersonMesh->SetVisibility(false);
+	thirdPersonMesh->AttachToComponent(this->worldMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
 	interactionRadius = 40.0f;
+
+	interactionHitbox = CreateAbstractDefaultSubobject<USphereComponent>("Collection Sphere");
+	interactionHitbox->AttachToComponent(this->worldMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	interactionHitbox->SetSphereRadius(interactionRadius, true);
+	interactionHitbox->SetGenerateOverlapEvents(true);
+	interactionHitbox->SetCollisionProfileName(TEXT("Pickup"));
 }
 
 // Called when the game starts or when spawned
@@ -41,7 +59,7 @@ void AWeapon::BeginPlay()
 	Super::BeginPlay();
 	
 
-	interactionHitbox->SetSphereRadius(interactionRadius,true);
+	
 }
 
 // Called every frame
@@ -52,8 +70,20 @@ void AWeapon::Tick(float DeltaTime)
 }
 
 /**WEAPON FUNCTIONS**/
+//Request a socket parameter in the future
 void AWeapon::BindWeapon(APlayerCharacter* playerCharacter){
+	if (playerCharacter == NULL)
+		return;
 
+	weaponOwner = playerCharacter;
+	worldMesh->SetSimulatePhysics(false);
+	//worldMesh->SetVisibility(false);
+	//Ask for an initial socket to attach to
+	this->AttachToActor(playerCharacter, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//Set 1st and 3rd person meshes to be visible.
+
+	this->interactionHitbox->SetCollisionProfileName(TEXT("NoCollision"));
+	worldMesh->SetCollisionProfileName(TEXT("NoCollision"));
 }
 void AWeapon::UnbindWeapon(){
 	
@@ -80,7 +110,11 @@ void AWeapon::AimReleased() {
 
 }
 
-void AWeapon::ReloadWeapon() {
+void AWeapon::ReloadPressed() {
+
+}
+
+void AWeapon::ReloadReleased() {
 
 }
 

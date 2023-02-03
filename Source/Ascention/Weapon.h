@@ -40,6 +40,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Add a socket param to this, or make an overload and if no socket is provided just add weapon to inventory.
 	UFUNCTION()
 	void BindWeapon(APlayerCharacter* playerCharacter);
 	UFUNCTION()
@@ -67,61 +68,69 @@ public:
 	UFUNCTION()
 	virtual bool IsReloading();
 
+	//Add in a switch socket function so the weapon may move around the player when swapped.
+
 /********************************************************************************************************************
 													VARIABLES
 *********************************************************************************************************************/	
+	USceneComponent* pickupRoot;
+
 	//Weapon model while on the floor, not owned by anyone, might get replaced by a generic collectable object
-	UPROPERTY(VisibleAnywhere,Category="World|Visual",DisplayName="World mesh")
-	UStaticMeshComponent* staticMesh;
+	UPROPERTY(EditAnywhere,Category="Ascention|World|Visual",DisplayName="World mesh")
+	UStaticMeshComponent* worldMesh;
 	//Add a weapon model for 1st and 3rd person
+	UPROPERTY(EditAnywhere, Category = "Ascention|World|Visual", DisplayName = "First person mesh")
+	UStaticMeshComponent* firstPersonMesh;
+	UPROPERTY(EditAnywhere, Category = "Ascention|World|Visual", DisplayName = "Third person mesh")
+	UStaticMeshComponent* thirdPersonMesh;
 
 	//The hitbox to collect or interact with the weapon
-	UPROPERTY(VisibleAnywhere,Category="World|Hitboxes",DisplayName="Interaction hitbox")
+	UPROPERTY(EditAnywhere,Category="Ascention|World|Hitboxes",DisplayName="Interaction hitbox")
 	USphereComponent* interactionHitbox;
 
 	//The radious of the interaction hitbox
-	UPROPERTY(EditAnywhere,Category="World|Hitboxes",DisplayName="Interaction hitbox radious")
+	UPROPERTY(EditAnywhere,Category="Ascention|World|Hitboxes",DisplayName="Interaction hitbox radious")
 	float interactionRadius;
 
 	//The CHARACTER that owns THE INSTANCE of this weapon, for player data use a reference to the class of the derived weapon
-	UPROPERTY(VisibleAnywhere,Category="Weapon Data",DisplayName="Owning character")
+	UPROPERTY(VisibleAnywhere,Category="Ascention|Weapon Data",DisplayName="Owning character")
 	APlayerCharacter* weaponOwner;
 
 	/**WEAPON ATTRIBUTES**/
 	//Should be a reference to a localization document, use a normal string for now
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Name path")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Name path")
 	FString displayName;
 
 	//Add in a weight or slots taken
 
 	//Does this weapon have an alt fire?
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Has altfire?")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Has altfire?")
 	bool altFireEnabled;
 
 	//Is this weapon ranged?
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Is ranged?")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Is ranged?")
 	bool isRanged;
 
 	//Can this weapon aim?
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Can use aim?")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Can use aim?")
 	bool canAim;
 
 	//Does this weapon need to reload? if not ammo should be taken straight from reserves as it fires
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Reloads?")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Reloads?")
 	bool reloads;
 
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Magazine size")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Magazine size")
 	int magazineSize;
 
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Reload time")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Reload time")
 	float reloadTime;
 
 	//Does the weapon keep firing while the fire button is held down?
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Has full auto?")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Has full auto?")
 	bool fullAuto;
 
 	//Delay between each shot the weapon takes, be it in full auto or semi mode. Basically rate of fire
-	UPROPERTY(EditAnywhere,Category="Weapon Data|Attributes",DisplayName="Delay between shots")
+	UPROPERTY(EditAnywhere,Category="Ascention|Weapon Data|Attributes",DisplayName="Delay between shots")
 	float shotDelay;
 
 	//Add a list with potential weapon modifiers, maybe a reference to an enum? look into it
